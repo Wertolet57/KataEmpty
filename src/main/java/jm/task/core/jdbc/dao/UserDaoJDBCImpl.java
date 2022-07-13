@@ -17,6 +17,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void createUsersTable() {
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "users", null);
+            if (tables.next())  return;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try (Statement statement = connection.createStatement()) {
              statement.execute("CREATE TABLE kata.Users (id int PRIMARY KEY AUTO_INCREMENT, " +
                     "Name varchar(20), LastName varchar(20), Age int)");
@@ -26,6 +33,13 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
+        try {
+            DatabaseMetaData metaData = connection.getMetaData();
+            ResultSet tables = metaData.getTables(null, null, "users", null);
+            if (!tables.next())  return;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         try (Statement statement = connection.createStatement()) {
             statement.execute("DROP TABLE kata.Users");
         } catch (SQLException e) {
