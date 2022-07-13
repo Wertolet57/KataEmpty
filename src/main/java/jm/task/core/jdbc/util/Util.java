@@ -12,13 +12,17 @@ public class Util {
     private final static String URL = "jdbc:mysql://localhost:3306/mysql";
     private final static String USERNAME = "root";
     private final static String PASSWORD = "root";
-    private Connection connection;
-    public Util() throws SQLException {
-        DriverManager.registerDriver(new Driver());
-        connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+    public Util() {
     }
 
-    public Connection getConnection() {
-        return connection;
+    public static Connection getConnection() {
+        try {
+            DriverManager.registerDriver(new Driver());
+            Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            return connection;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

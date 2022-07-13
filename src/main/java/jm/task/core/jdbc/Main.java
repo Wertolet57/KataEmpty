@@ -21,6 +21,7 @@ public class Main {
         List<User> users =  userService.getAllUsers();
         for (var user : users) {
             System.out.println(user);
+
         }
         userService.cleanUsersTable();
         userService.dropUsersTable();
