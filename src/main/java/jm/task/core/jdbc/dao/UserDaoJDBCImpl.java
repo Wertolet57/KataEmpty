@@ -9,32 +9,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    private Util util;
 
-    {
-        try {
-            util = new Util();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    private Connection connection =  util.getConnection();
-    private Statement statement;
-
-    {
-        try {
-            statement = connection.createStatement();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private Connection connection =  Util.getConnection();
 
     public UserDaoJDBCImpl() {
 
     }
 
     public void createUsersTable() {
-        try {
+        try (Statement statement = connection.createStatement()) {
              statement.execute("CREATE TABLE kata.Users (id int PRIMARY KEY AUTO_INCREMENT, " +
                     "Name varchar(20), LastName varchar(20), Age int)");
         } catch (SQLException e) {
@@ -43,7 +26,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void dropUsersTable() {
-        try {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("DROP TABLE kata.Users");
         } catch (SQLException e) {
             System.out.print("ошибка удаления");
@@ -74,7 +57,7 @@ public class UserDaoJDBCImpl implements UserDao {
 
     public List<User> getAllUsers() {
         List<User> list = new LinkedList<>();
-        try (ResultSet result = statement.executeQuery("SELECT * FROM kata.Users");) {
+        try (Statement statement = connection.createStatement();ResultSet result = statement.executeQuery("SELECT * FROM kata.Users")) {
                while (result.next()) {
                    list.add(new User(result.getString("Name"),
                                     result.getString("LastName"),
@@ -87,7 +70,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void cleanUsersTable() {
-        try {
+        try (Statement statement = connection.createStatement()) {
             statement.execute("DELETE FROM kata.Users");
         } catch (SQLException e) {
             throw new RuntimeException(e);
