@@ -2,17 +2,18 @@ package jm.task.core.jdbc.util;
 
 import com.mysql.cj.jdbc.Driver;
 import jm.task.core.jdbc.model.User;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.boot.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.*;
+
+import static org.hibernate.cfg.AvailableSettings.DRIVER;
 
 public class Util {
     // реализуйте настройку соеденения с БД
@@ -32,26 +33,28 @@ public class Util {
             throw new RuntimeException(e);
         }
     }
+    private static SessionFactory sessionFactory;
     public static SessionFactory getSessionFactory() {
-        return null;
-    }
-    public static Session getCurrentSession() {
-        Map<String, String> settings = new HashMap<>();
-        settings.put("connection.driver_class", "com.mysql.jdbc.Driver");
-        settings.put("dialect", "org.hibernate.dialect.MySQL8Dialect");
-        settings.put("hibernate.connection.url", URL);
-        settings.put("hibernate.connection.username", USERNAME);
-        settings.put("hibernate.connection.password", PASSWORD);
-        settings.put("hibernate.current_session_context_class", "thread");
+        try {
+            Configuration configuration = new Configuration();
+            Properties settings = new Properties();
+            //settings.put(DRIVER, DRIVER);
+            settings.put(Environment.URL, URL);
+            settings.put(Environment.USER, USERNAME);
+            settings.put(Environment.PASS, PASSWORD);
+            settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+            settings.put(Environment.SHOW_SQL, "true");
+            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+            configuration.setProperties(settings);
+            configuration.addAnnotatedClass(User.class);
+            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
+                    applySettings(configuration.getProperties());
 
-        ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                .applySettings(settings).build();
+            sessionFactory = configuration.buildSessionFactory(builder.build());
+        } catch (Exception e) {
+            System.out.println("Error");
+        }
 
-        MetadataSources metadataSources = new MetadataSources(serviceRegistry);
-        metadataSources.addAnnotatedClass(User.class);
-        Metadata metadata = metadataSources.buildMetadata();
-        SessionFactory sessionFactory = metadata.getSessionFactoryBuilder().build();
-        Session session = sessionFactory.getCurrentSession();
-        return session;
+        return sessionFactory;
     }
 }
