@@ -17,7 +17,7 @@ import static org.hibernate.cfg.AvailableSettings.DRIVER;
 
 public class Util {
     // реализуйте настройку соеденения с БД
-    private final static String URL = "jdbc:mysql://localhost:3306/mysql";
+    private final static String URL = "jdbc:mysql://localhost:3306/kata";
     private final static String USERNAME = "root";
     private final static String PASSWORD = "root";
 
@@ -38,7 +38,6 @@ public class Util {
         try {
             Configuration configuration = new Configuration();
             Properties settings = new Properties();
-            //settings.put(DRIVER, DRIVER);
             settings.put(Environment.URL, URL);
             settings.put(Environment.USER, USERNAME);
             settings.put(Environment.PASS, PASSWORD);
@@ -52,7 +51,7 @@ public class Util {
 
             sessionFactory = configuration.buildSessionFactory(builder.build());
         } catch (Exception e) {
-            System.out.println("Error");
+            System.out.println("Something");
         }
 
         return sessionFactory;
