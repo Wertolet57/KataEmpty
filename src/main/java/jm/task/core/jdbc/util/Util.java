@@ -35,25 +35,26 @@ public class Util {
     }
     private static SessionFactory sessionFactory;
     public static SessionFactory getSessionFactory() {
-        try {
-            Configuration configuration = new Configuration();
-            Properties settings = new Properties();
-            settings.put(Environment.URL, URL);
-            settings.put(Environment.USER, USERNAME);
-            settings.put(Environment.PASS, PASSWORD);
-            settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
-            settings.put(Environment.SHOW_SQL, "true");
-            settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
-            configuration.setProperties(settings);
-            configuration.addAnnotatedClass(User.class);
-            StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-                    applySettings(configuration.getProperties());
+        if(sessionFactory == null) {
+            try {
+                Configuration configuration = new Configuration();
+                Properties settings = new Properties();
+                settings.put(Environment.URL, URL);
+                settings.put(Environment.USER, USERNAME);
+                settings.put(Environment.PASS, PASSWORD);
+                settings.put(Environment.DIALECT, "org.hibernate.dialect.MySQLDialect");
+                settings.put(Environment.SHOW_SQL, "true");
+                settings.put(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread");
+                configuration.setProperties(settings);
+                configuration.addAnnotatedClass(User.class);
+                StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
+                        applySettings(configuration.getProperties());
 
-            sessionFactory = configuration.buildSessionFactory(builder.build());
-        } catch (Exception e) {
-            System.out.println("Something");
+                sessionFactory = configuration.buildSessionFactory(builder.build());
+            } catch (Exception e) {
+                System.out.println("Something");
+            }
         }
-
         return sessionFactory;
     }
 }
